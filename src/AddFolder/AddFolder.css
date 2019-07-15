@@ -1,0 +1,17 @@
+.form {
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.add-folder-hint {
+    color: grey;
+}
+
+.form-group {
+    display: inline-block;
+    margin: 5%;
+}
+
+
