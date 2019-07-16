@@ -8,6 +8,8 @@ import NotePageMain from '../NotePageMain/NotePageMain';
 import ApiContext from '../ApiContext';
 import config from '../config';
 import './App.css';
+import AddFolder from '../AddFolder/AddFolder';
+import AddNote from '../AddNote/AddNote';
 
 class App extends Component {
   state = {
@@ -41,7 +43,7 @@ class App extends Component {
       notes: this.state.notes.filter(note => note.id !== noteId)
     });
   };
-
+  
   renderNavRoutes() {
     return (
       <>
@@ -54,8 +56,16 @@ class App extends Component {
           />
         ))}
         <Route path="/note/:noteId" component={NotePageNav} />
-        <Route path="/add-folder" component={NotePageNav} />
-        <Route path="/add-note" component={NotePageNav} />
+        <Route exact path="/add-folder" render={
+          (props) => {
+            return <AddFolder {...props}/>
+          }
+        } />
+        <Route path="/add-note" render={
+          (props) => {
+            return <AddNote {...props} {...this.state} />
+          }
+        } />
       </>
     );
   }
@@ -76,24 +86,16 @@ class App extends Component {
     );
   }
 
-  addFolder = (folderName) => {
-    const body = JSON.stringify({
-      name: folderName
-    });
+  addFolder = (folder) => {
+    this.setState({
+      folders: [...this.state.folders, folder]
+    })
+  }
 
-    const options = {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body
-    }
-
-    fetch(`${config.API_ENDPOINT}/folders`, options)
-      .then(res => {
-        if (!res.ok)
-          return res.json().then(e => Promise.reject(e));
-        return res.json()
-      })
-      
+  addNote = (note) => {
+    this.setState({
+      notes: [...this.state.notes, note]
+    })
   }
 
   render() {
@@ -101,7 +103,8 @@ class App extends Component {
       notes: this.state.notes,
       folders: this.state.folders,
       deleteNote: this.handleDeleteNote,
-      addFolder: this.addFolder
+      addFolder: this.addFolder,
+      addNote: this.addNote
     };
     return (
       <ApiContext.Provider value={value}>
